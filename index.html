@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rally "O Alvo" - Pontuação e Administração</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Cores Inspiradas em Juventude Cristã - Mais Profissional e Vibrante */
+            --primary-dark-blue: #002D62; /* Azul Marinho Profundo, para cabeçalhos fortes, fundo */
+            --primary-blue: #0A6BEF; /* Azul Principal, vibrante e moderno */
+            --secondary-light-blue: #64B5F6; /* Azul Claro, para detalhes e acentos suaves */
+            --accent-green: #4CAF50; /* Verde vibrante para sucesso/ações */
+            --accent-yellow: #FFD700; /* Dourado para destaque/rank ouro */
+            --light-gray-bg: #F8F9FA; /* Fundo muito claro, quase branco */
+            --medium-gray-border: #E0E0E0; /* Cinza para bordas sutis */
+            --dark-text: #212529; /* Texto escuro padrão */
+            --light-text: #495057; /* Texto cinza para paragrafos */
+            --danger-red: #DC3545; /* Vermelho para alerta/botões perigosos */
+
+            /* Mapeamento para nomes de variáveis existentes */
+            --header-bg: var(--primary-dark-blue);
+            --main-color: var(--primary-blue);
+            --success-color: var(--accent-green);
+            --rank-gold: var(--accent-yellow);
+            --rank-silver: #B0BEC5; /* Prata, mais suave */
+            --rank-bronze: #E67E22; /* Bronze, mais amigável */
+            --button-hover-color: #085CD2; /* Tom mais escuro do azul principal para hover */
+            --info-color: #17A2B8;
+            --white: #FFFFFF; /* Garante o branco puro */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif; /* Fonte para o corpo do texto */
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-gray-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: flex-start; /* Alinha ao topo para considerar o header fixo */
+            padding-top: 80px; /* Espaço para o cabeçalho fixo */
+            overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: var(--header-bg);
+            color: var(--white);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            box-sizing: border-box; /* Inclui padding e borda na largura total */
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif; /* Fonte para o título do header */
+            font-size: 2em; /* Tamanho maior no header */
+            color: var(--white);
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .login-btn-header {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px; /* Botões mais arredondados */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .login-btn-header:hover {
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            max-width: 1000px; /* Aumenta um pouco a largura máxima do container principal */
+            width: 95%; /* Usa 95% da largura em telas grandes */
+            margin: 30px auto; /* Mais margem superior e inferior */
+            background-color: var(--white);
+            padding: 40px; /* Aumenta o padding interno */
+            border-radius: 15px; /* Bordas mais arredondadas */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); /* Sombra mais pronunciada */
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif; /* Nova fonte para h1 */
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 35px; /* Mais espaço abaixo do título */
+            font-weight: 800; /* Mais negrito */
+            font-size: 3.2em; /* Título maior */
+            border-bottom: 5px solid var(--medium-gray-border); /* Borda mais grossa e suave */
+            padding-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px; /* Mais espaçamento entre letras */
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif; /* Nova fonte para h2 */
+            color: var(--primary-blue);
+            text-align: center;
+            margin-top: 45px;
+            margin-bottom: 30px;
+            font-weight: 700;
+            font-size: 2.5em; /* Ajuste para h2 */
+        }
+
+        .mission, .tribe-scoring-section {
+            background-color: var(--white);
+            border: 1px solid var(--medium-gray-border);
+            border-radius: 12px; /* Mais arredondado */
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .mission h2 {
+            background-color: var(--primary-dark-blue); /* Fundo mais escuro para o título da missão */
+            color: var(--white);
+            padding: 18px 30px;
+            margin: -35px -35px 30px -35px; /* Ajusta margem para cobrir o padding */
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-size: 2em; /* Tamanho maior para título de missão */
+            text-align: left;
+            font-weight: 700;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 15px; /* Mais espaço para labels */
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 1.1em;
+        }
+
+        input[type="number"],
+        input[type="checkbox"],
+        select {
+            padding: 16px; /* Mais padding para inputs */
+            border: 1px solid var(--medium-gray-border);
+            border-radius: 10px; /* Inputs mais arredondados */
+            font-size: 1.2em; /* Fonte maior nos inputs */
+            width: 100%;
+            max-width: 300px; /* Aumenta um pouco a largura máxima */
+            text-align: center;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        select:focus,
+        .modal-content input[type="text"]:focus,
+        .modal-content input[type="password"]:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.3rem rgba(10, 107, 239, 0.3); /* Sombra de foco mais visível */
+            outline: none;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.5); /* Checkbox um pouco maior */
+            margin-right: 12px;
+            vertical-align: middle;
+            accent-color: var(--accent-green); /* Cor de destaque para checkbox */
+        }
+
+        p {
+            margin-top: 18px;
+            color: var(--light-text); /* Cor de texto mais suave para parágrafos */
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 25px; /* Mais espaço entre botões */
+            margin-top: 35px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .button-group button {
+            padding: 18px 40px; /* Mais padding para botões */
+            font-size: 1.3em; /* Fonte maior para botões */
+            border: none;
+            border-radius: 12px; /* Botões mais arredondados */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .button-group button:hover {
+            transform: translateY(-3px); /* Efeito de hover mais pronunciado */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-group .info-btn {
+            background-color: var(--white);
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        .button-group .info-btn:hover {
+            background-color: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .button-group .primary-btn {
+            background-color: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .button-group .primary-btn:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        .button-group .danger-btn {
+            background-color: var(--danger-red);
+            color: var(--white);
+        }
+
+        .button-group .danger-btn:hover {
+            background-color: #C82333; /* Vermelho mais escuro no hover */
+        }
+
+        .button-group .secondary-btn {
+            background-color: var(--accent-green);
+            color: var(--white);
+        }
+        .button-group .secondary-btn:hover {
+            background-color: #2E8B57; /* Verde mais escuro no hover */
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .total-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 35px; /* Aumenta o espaçamento */
+            margin-top: 45px;
+            justify-content: center;
+        }
+
+        .total, .tribe-total, .ranking, #leaderDisplay {
+            flex: 1;
+            min-width: 280px; /* Garante largura mínima para quebras responsivas */
+            background-color: var(--primary-blue); /* Fundo principal azul */
+            color: var(--white);
+            padding: 40px; /* Mais padding */
+            border-radius: 15px; /* Bordas mais arredondadas */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); /* Sombra mais forte */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.4); /* Borda branca suave */
+            text-align: center;
+        }
+
+        .tribe-total {
+            background-color: var(--secondary-light-blue); /* Azul claro para tribos individuais */
+        }
+
+        .total h2, .tribe-total h2, .ranking h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--white);
+            margin: 0;
+            font-size: 2.5em; /* Título dos cards maior */
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        .tribe-icon {
+            width: 50px; /* Logo das tribos maior */
+            height: 50px;
+            vertical-align: middle;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--white); /* Borda branca na logo */
+        }
+
+        #dailyBaseDisplay, .tribe-score {
+            font-size: 4em; /* Pontuação principal ainda maior */
+            font-weight: 900;
+            display: block;
+            margin-top: 25px;
+            color: var(--white);
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4); /* Sombra mais forte */
+        }
+
+        #leaderDisplay {
+            background-color: var(--primary-dark-blue); /* Fundo mais escuro para o líder */
+            color: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+        #leaderDisplay h2 {
+            color: var(--white);
+            font-size: 2.5em;
+            margin-bottom: 0;
+            display: block;
+            align-items: unset;
+            justify-content: unset;
+            gap: unset;
+        }
+
+        #leaderName {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4.5em; /* Nome do líder maior */
+            font-weight: 900;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            color: var(--accent-yellow);
+            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8); /* Sombra mais forte */
+            animation: bounceIn 1s ease-out;
+            width: 100%;
+        }
+        #leaderName .leader-icon {
+            width: 120px; /* Ícone do líder maior */
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent-yellow); /* Borda mais grossa */
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+        }
+        #leaderName .leader-text {
+            display: block;
+            color: var(--accent-yellow);
+        }
+
+        .ranking {
+            background-color: var(--primary-dark-blue);
+            text-align: left;
+            padding: 40px;
+        }
+
+        .ranking h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .ranking ol {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ranking li {
+            font-size: 1.4em; /* Ranking lista maior */
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .ranking li:last-child {
+            border-bottom: none;
+        }
+
+        .ranking li .trophy {
+            font-size: 2.2em; /* Troféu maior */
+            line-height: 1;
+            margin-right: 10px; /* Espaço entre troféu e nome */
+        }
+        .ranking li .tribe-rank-name-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            flex-grow: 1;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+        .ranking li .tribe-rank-name-group .tribe-icon {
+            width: 35px; /* Logo no ranking maior */
+            height: 35px;
+            border: 1px solid var(--white);
+        }
+
+        .ranking li .tribe-rank-score {
+            font-weight: 800;
+            font-size: 1.7em; /* Pontuação no ranking maior */
+            color: var(--white);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Cores dos ranks */
+        .ranking li:nth-child(1) .tribe-rank-name-group .tribe-name-text { color: var(--rank-gold); }
+        .ranking li:nth-child(2) .tribe-rank-name-group .tribe-name-text { color: var(--rank-silver); }
+        .ranking li:nth-child(3) .tribe-rank-name-group .tribe-name-text { color: var(--rank-bronze); }
+
+        #regulation-section {
+            background-color: var(--white);
+            border: 1px solid var(--medium-gray-border);
+            border-radius: 12px;
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-height: 80vh; /* Aumenta um pouco a altura máxima */
+            overflow-y: auto;
+            color: var(--dark-text);
+        }
+
+        #regulation-section h2 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+        }
+
+        #regulation-section h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-blue);
+            margin-top: 35px;
+            margin-bottom: 18px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        #regulation-section h4 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--accent-green);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        #regulation-section ul {
+            list-style: disc;
+            margin-left: 35px;
+            margin-bottom: 18px;
+            font-size: 1.1em;
+            color: var(--light-text);
+        }
+
+        #regulation-section li {
+            margin-bottom: 10px;
+        }
+
+        #regulation-section p {
+            margin-bottom: 18px;
+            color: var(--light-text);
+            font-size: 1.1em;
+        }
+        #regulation-section hr {
+            border: 0;
+            height: 2px; /* Linha mais grossa */
+            background: var(--medium-gray-border);
+            margin: 35px 0;
+        }
+
+        #championAnimation {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 45, 98, 0.98); /* Fundo da animação mais escuro */
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out forwards;
+            backdrop-filter: blur(8px); /* Blur mais forte */
+        }
+
+        .confetti {
+            position: absolute;
+            width: 18px; /* Confete maior */
+            height: 18px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: confettiFall 5s infinite ease-out;
+        }
+
+        #championTitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 6em; /* Título do campeão maior */
+            color: var(--accent-yellow);
+            font-weight: 900;
+            margin-bottom: 40px;
+            text-shadow: 8px 8px 20px rgba(0, 0, 0, 0.95); /* Sombra mais intensa */
+            animation: pulse 1.5s infinite alternate, glow 1s infinite alternate;
+        }
+
+        #championNameAnimated {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8em; /* Nome do campeão maior */
+            color: var(--white);
+            font-weight: 900;
+            text-shadow: 10px 10px 25px rgba(0, 0, 0, 0.98);
+            animation: slideIn 1.5s ease-out forwards, colorChange 3s infinite alternate;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+        }
+        #championNameAnimated .tribe-icon {
+            width: 150px; /* Ícone do campeão maior */
+            height: 150px;
+            border-width: 6px; /* Borda mais grossa */
+        }
+
+        /* --- Estilos para o Modal de Login --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1001; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.8); /* Fundo mais escuro */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-button {
+            color: var(--light-text);
+            font-size: 32px; /* Botão de fechar maior */
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--danger-red);
+            text-decoration: none;
+        }
+
+        .modal-content h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-dark-blue);
+            font-size: 2.8em; /* Título do modal maior */
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid var(--medium-gray-border);
+            letter-spacing: 1.2px;
+        }
+        .modal-content p {
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.15em;
+        }
+        .modal-content label {
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        .modal-content input {
+            padding: 15px;
+            font-size: 1.15em;
+            margin-bottom: 20px;
+            max-width: 300px; /* Ajuste para o modal */
+        }
+        .modal-content .button-group {
+            margin-top: 25px;
+            max-width: 300px;
+        }
+        #login-message {
+            margin-top: 25px;
+            font-size: 1.1em;
+        }
+
+        /* --- Media Queries para Responsividade --- */
+
+        /* Tablets e Telas Maiores (até 992px de largura) */
+        @media (max-width: 992px) {
+            body {
+                padding-top: 70px;
+            }
+            header {
+                padding: 12px 20px;
+            }
+            header h1 {
+                font-size: 1.6em;
+            }
+            .login-btn-header {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            .container {
+                padding: 30px;
+                margin: 20px auto;
+            }
+            h1 {
+                font-size: 2.8em;
+            }
+            h2 {
+                font-size: 2.2em;
+            }
+            .mission h2 {
+                font-size: 1.8em;
+                margin: -30px -30px 25px -30px;
+            }
+            input[type="number"], select {
+                padding: 14px;
+                font-size: 1.1em;
+            }
+            .button-group button {
+                padding: 16px 35px;
+                font-size: 1.2em;
+            }
+            #dailyBaseDisplay, .tribe-score {
+                font-size: 3.5em;
+            }
+            #leaderName {
+                font-size: 4em;
+            }
+            #leaderName .leader-icon {
+                width: 100px;
+                height: 100px;
+            }
+            .ranking li {
+                font-size: 1.3em;
+            }
+            .ranking li .trophy {
+                font-size: 2em;
+            }
+            .ranking li .tribe-rank-score {
+                font-size: 1.5em;
+            }
+            #championTitle {
+                font-size: 5em;
+            }
+            #championNameAnimated {
+                font-size: 7em;
+            }
+            #championNameAnimated .tribe-icon {
+                width: 120px;
+                height: 120px;
+            }
+            #regulation-section h2 {
+                font-size: 2.2em;
+            }
+            #regulation-section h3 {
+                font-size: 1.8em;
+            }
+            #regulation-section h4 {
+                font-size: 1.5em;
+            }
+            .modal-content {
+                padding: 35px;
+                max-width: 400px;
+            }
+            .modal-content h1 {
+                font-size: 2.2em;
+            }
+            .modal-content input {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+
+        /* Celulares (até 768px de largura) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                padding-top: 60px; /* Ajuste para o header fixo em mobile */
+            }
+            header {
+                flex-direction: row; /* Mantém em linha no topo */
+                padding: 10px 15px;
+            }
+            header h1 {
+                font-size: 1.3em;
+            }
+            .login-btn-header {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+            .container {
+                padding: 25px;
+                margin: 15px auto;
+                width: 98%; /* Usa mais largura em mobile */
+            }
+            .total-section {
+                flex-direction: column;
+                gap: 25px;
+            }
+            .total, .tribe-total, .ranking, #leaderDisplay {
+                padding: 30px;
+                min-width: unset; /* Remove largura mínima */
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            input[type="number"], select {
+                max-width: 100%;
+                padding: 12px;
+                font-size: 1em;
+            }
+            h1 {
+                font-size: 2em;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+            h2 {
+                font-size: 1.8em;
+                margin-top: 30px;
+                margin-bottom: 20px;
+            }
+            .mission h2 {
+                font-size: 1.5em;
+                padding: 15px 20px;
+                margin: -25px -25px 20px -25px;
+            }
+            label {
+                font-size: 0.95em;
+            }
+            p {
+                font-size: 0.9em;
+            }
+            .button-group button {
+                padding: 14px 28px;
+                font-size: 1.1em;
+            }
+            #dailyBaseDisplay, .tribe-score {
+                font-size: 3em;
+            }
+            #leaderName {
+                font-size: 3.5em;
+                gap: 10px;
+            }
+            #leaderName .leader-icon {
+                width: 80px;
+                height: 80px;
+                border-width: 3px;
+            }
+            .ranking li {
+                font-size: 1.1em;
+                padding: 10px 0;
+                gap: 10px;
+            }
+            .ranking li .trophy {
+                font-size: 1.8em;
+            }
+            .ranking li .tribe-rank-score {
+                font-size: 1.3em;
+            }
+            .ranking li .tribe-rank-name-group .tribe-icon {
+                width: 28px;
+                height: 28px;
+            }
+            #championTitle {
+                font-size: 3.8em;
+            }
+            #championNameAnimated {
+                font-size: 5.5em;
+                gap: 15px;
+            }
+            #championNameAnimated .tribe-icon {
+                width: 100px;
+                height: 100px;
+                border-width: 4px;
+            }
+            #regulation-section {
+                padding: 20px;
+            }
+            #regulation-section h2 {
+                font-size: 2em;
+            }
+            #regulation-section h3 {
+                font-size: 1.6em;
+            }
+            #regulation-section h4 {
+                font-size: 1.2em;
+            }
+
+            /* Histórico: Fazer a tabela ter scroll horizontal em telas pequenas */
+            #history-section table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            #history-section thead, #history-section tbody, #history-section tfoot,
+            #history-section th, #history-section td, #history-section tr {
+                display: table-cell;
+                white-space: nowrap;
+            }
+            #history-section tr {
+                display: table-row;
+            }
+            .modal-content {
+                padding: 25px;
+            }
+            .modal-content h1 {
+                font-size: 2em;
+            }
+            .modal-content p {
+                font-size: 1em;
+            }
+            .modal-content input {
+                padding: 10px;
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Rally "O Alvo"</h1>
+    <button class="login-btn-header" onclick="openLoginModal()">Login Secretaria</button>
+</header>
+
+<div id="login-modal" class="modal hidden"> <div class="modal-content">
+        <span class="close-button" onclick="closeLoginModal()">&times;</span>
+        <h1>Login Secretaria Rally "O Alvo"</h1>
+        <p>Acesse com seu usuário e senha para gerenciar as pontuações.</p>
+        <label for="login-username">Usuário:</label>
+        <input type="text" id="login-username" placeholder="Usuário da secretaria">
+
+        <label for="login-password">Senha:</label>
+        <input type="password" id="login-password" placeholder="Senha">
+
+        <div class="button-group">
+            <button class="primary-btn" onclick="performLogin()">Entrar</button>
+        </div>
+        <p id="login-message" style="color: red; margin-top: 15px; font-weight: 600;"></p>
+    </div>
+</div>
+
+<div class="container">
+    <div id="public-content">
+        <h1>Resultados do Rally "O Alvo"</h1>
+        <p style="text-align: center; margin-bottom: 40px;">Acompanhe a pontuação das tribos e a classificação geral do nosso Rally "O Alvo"! Fique ligado para ver qual tribo alcançará o Alvo.</p>
+        <hr>
+        <div class="total-section">
+            <div class="tribe-total">
+                <h2><img src="Levi.png" alt="Logo Levi" class="tribe-icon"> Tribo de Levi</h2>
+                <span class="tribe-score" id="score_levi">0</span>
+            </div>
+
+            <div class="tribe-total">
+                <h2><img src="Juda.png" alt="Logo Judá" class="tribe-icon"> Tribo de Judá</h2>
+                <span class="tribe-score" id="score_juda">0</span>
+            </div>
+
+            <div class="tribe-total">
+                <h2><img src="Naftali.png" alt="Logo Naftali" class="tribe-icon"> Tribo de Naftali</h2>
+                <span class="tribe-score" id="score_naftali">0</span>
+            </div>
+
+            <div class="tribe-total">
+                <h2><img src="Gade.png" alt="Logo Gade" class="tribe-icon"> Tribo de Gade</h2>
+                <span class="tribe-score" id="score_gade">0</span>
+            </div>
+
+            <div class="ranking">
+                <h2>Classificação das Tribos (Total)</h2>
+                <ol id="tribes_ranking"></ol>
+            </div>
+
+            <div id="leaderDisplay">
+                <h2>Líder Atual:</h2>
+                <span id="leaderName"><span class="leader-text">Nenhuma tribo pontuada</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-content" class="hidden">
+        <h1>Rally "O Alvo" - Painel da Secretaria</h1>
+
+        <div class="button-group">
+            <button class="info-btn" onclick="toggleRegulation()">Ver Regulamento</button>
+            <button class="primary-btn" onclick="toggleHistory()">Histórico Semanal</button>
+            <button class="secondary-btn" onclick="toggleChampionAnimation()">Ver Campeão Final</button>
+            <button class="danger-btn" onclick="confirmEndWeek()">Finalizar Semana e Salvar Totais</button>
+            <button class="info-btn" onclick="performLogout()">Sair (Logout)</button>
+        </div>
+
+        <div id="regulation-section" class="hidden">
+            <h2>Regulamento do Rally "O Alvo"</h2>
+            <hr>
+            <h3>📌 Mecânica do Jogo:</h3>
+            <ul>
+                <li>As tribos (equipes) acumulam 🎯 **ALVOS (pontos)** ao cumprirem missões.</li>
+                <li>Missões **SEMANAIS** têm valores diferentes.</li>
+                <li>Missões especiais dão bônus maiores.</li>
+            </ul>
+
+            <h3>📅 Missões Semanais (06 a 12 de Julho)</h3>
+
+            <h4>📍 SEGUNDA-FEIRA</h4>
+            <p>🅰️➕ **ALGO A MAIS**</p>
+            <ul>
+                <li>Cada jovem presente na reunião = **50 🎯**</li>
+                <li>Enviar 1 foto da reunião no grupo até 22h.</li>
+            </ul>
+
+            <h4>📍 TERÇA-FEIRA</h4>
+            <p>🦶🏘 **PÉ NO BAIRRO** (Evangelismo)</p>
+            <ul>
+                <li>**100 🎯** por trabalho realizado (mínimo 3 jovens da tribo).</li>
+                <li>Enviar 1 foto (câmera deitada) com jornal/folheto da semana.</li>
+            </ul>
+
+            <h4>📍 QUARTA-FEIRA</h4>
+            <p>📖🇨🇷 **SALVAÇÃO DA ALMA**</p>
+            <ul>
+                <li>Jovens nas reuniões (outros horários) = **30 🎯** cada</li>
+                <li>Jovens na reunião principal das 18h = **50 🎯** cada</li>
+            </ul>
+
+            <h4>📍 QUINTA-FEIRA</h4>
+            <p>❤️‍🔥🇨🇷 **TERAPIA DO AMOR** (Reunião Principal)</p>
+            <ul>
+                <li>**50 🎯** por jovem presente às 19h.</li>
+            </ul>
+
+            <h4>📍 SÁBADO</h4>
+            <p>📻🇨🇷 **CONEXÃO JOVEM**</p>
+            <ul>
+                <li>**20 🎯** por jovem conectado (**11h30**).</li>
+                <li>FOTO NO GRUPO para comprovar.</li>
+            </ul>
+            <p>🎯 **ENCONTRO JOVEM** (EJ)</p>
+            <ul>
+                <li>**100 🎯** por jovem novo (que nunca foi ao EJ).</li>
+                <li>**60 🎯** por jovem afastado que retornar.</li>
+            </ul>
+
+            <h4>📍 DOMINGO</h4>
+            <p>⛪️🇨🇷 **CONCENTRAÇÃO DE FÉ**</p>
+            <ul>
+                <li>**150 🎯** por jovem presente 9H30.</li>
+                <li>**75 🎯** por jovem presente 9H30.</li>
+                <li>FOTO NO GRUPO para comprovar.</li>
+            </ul>
+
+            <hr>
+
+            <h3>🔥 Missões Especiais (Bônus Alto!)</h3>
+
+            <h4>📍 Ponto de Oração</h4>
+            <ul>
+                <li>**300 🎯** por tribo que organizar um momento de oração durante a semana.</li>
+            </ul>
+
+            <h4>📍 Evangelização Criativa</h4>
+            <ul>
+                <li>**1.000 🎯** para a tribo que fizer uma ação evangelística inovadora (entregas de livros, algo criativo!).</li>
+                <li>FOTO NO GRUPO para comprovar.</li>
+            </ul>
+
+            <h4>🌳 Desafio dos Alvos</h4>
+            <ul>
+                <li>**2.000 🎯** – Montar um time de futebol (mínimo **5 jogadores**). Trazer no encontro.</li>
+                <li>**700 🎯** – Doar 1 resma de papel A4.</li>
+                <li>**1.000 🎯** – Melhor foto da tribo (dentro ou fora da igreja).</li>
+            </ul>
+
+            <h4>🧽🪣 Manutenção do Templo</h4>
+            <ul>
+                <li>**200 🎯** por jovem que ajudar na limpeza/organização no Sábado (**8h30**).</li>
+            </ul>
+
+            <hr>
+
+            <h3>⚡️ Missões Surpresa</h3>
+            <ul>
+                <li>O líder pode lançar desafios-relâmpago a qualquer momento!</li>
+                <li>Valores de 🎯 **ALVOS** serão definidos na hora.</li>
+            </ul>
+
+            <hr>
+            <h3>🏆 Meta da Tribo</h3>
+            <ul>
+                <li>1ª Semana: Trazer 20 jovens (vale **10.000 pontos**).</li>
+            </ul>
+
+            <hr>
+            <h3>🎯 Objetivo Final:</h3>
+            <p>Manter o foco no Alvo Maior (Cristo) enquanto os jovens se divertem, competem e fortalecem sua comunhão!</p>
+            <p><em>"Prossigo para o alvo, para o prêmio da soberana vocação de Deus em Cristo Jesus."</em> (Filipenses 3:14)</p>
+            <div class="button-group">
+                <button class="primary-btn" onclick="showDailyMissionsAdmin()">Voltar ao Calculador</button>
+            </div>
+        </div>
+
+        <div id="daily-missions-section-admin">
+            <div class="mission">
+                <h2>Semana Atual: <span id="current-week-display">1</span></h2>
+                <label for="week-selector">Mudar para Semana:</label>
+                <select id="week-selector" onchange="confirmChangeWeek()"></select>
+            </div>
+
+            <h2>Pontuação Base Diária das Missões</h2>
+            <div class="mission">
+                <h2>Segunda-feira - Algo a Mais</h2>
+                <label for="segunda">Jovens presentes:</label>
+                <input type="number" id="segunda" value="0" oninput="calculateDailyBase('segunda')" min="0">
+                <p>Pontos: 50 cada</p>
+            </div>
+
+            <div class="mission">
+                <h2>Terça-feira - Pé no Bairro</h2>
+                <label for="terca">Trabalhos realizados (mínimo 3 jovens):</label>
+                <input type="number" id="terca" value="0" oninput="calculateDailyBase('terca')" min="0">
+                <p>Pontos: 100 cada</p>
+            </div>
+
+            <div class="mission">
+                <h2>Quarta-feira - Salvação da Alma</h2>
+                <label for="quarta_outros">Jovens em outros horários:</label>
+                <input type="number" id="quarta_outros" value="0" oninput="calculateDailyBase('quarta_outros')" min="0">
+                <p>Pontos: 30 cada</p>
+                <label for="quarta_principal">Jovens na reunião principal (18h):</label>
+                <input type="number" id="quarta_principal" value="0" oninput="calculateDailyBase('quarta_principal')" min="0">
+                <p>Pontos: 50 cada</p>
+            </div>
+
+            <div class="mission">
+                <h2>Quinta-feira - Terapia do Amor</h2>
+                <label for="quinta">Jovens presentes:</label>
+                <input type="number" id="quinta" value="0" oninput="calculateDailyBase('quinta')" min="0">
+                <p>Pontos: 50 cada</p>
+            </div>
+
+            <h2>Sábado - Missões</h2>
+            <div class="mission">
+                <h2>Conexão Jovem</h2>
+                <label for="sabado">Jovens conectados (11h30):</label>
+                <input type="number" id="sabado" value="0" oninput="calculateDailyBase('sabado')" min="0">
+                <p>Pontos: 20 cada</p>
+            </div>
+
+            <div class="mission">
+                <h2>Encontro Jovem (EJ)</h2>
+                <label for="ej_novo">Jovens novos que nunca foram ao EJ:</label>
+                <input type="number" id="ej_novo" value="0" oninput="calculateDailyBase('ej_novo')" min="0">
+                <p>Pontos: 100 cada</p>
+
+                <label for="ej_afastado">Jovens afastados que retornaram ao EJ:</label>
+                <input type="number" id="ej_afastado" value="0" oninput="calculateDailyBase('ej_afastado')" min="0">
+                <p>Pontos: 60 cada</p>
+            </div>
+
+            <div class="mission">
+                <h2>Domingo - Concentração de Fé</h2>
+                <label for="domingo_150">Jovens presentes (150pts):</label>
+                <input type="number" id="domingo_150" value="0" oninput="calculateDailyBase('domingo_150')" min="0">
+                <p>Pontos: 150 cada</p>
+                <label for="domingo_75">Jovens presentes (75pts):</label>
+                <input type="number" id="domingo_75" value="0" oninput="calculateDailyBase('domingo_75')" min="0">
+                <p>Pontos: 75 cada</p>
+            </div>
+
+            <h2>Desafios Extras / Bônus</h2>
+
+            <div class="mission">
+                <h2>Manutenção do Templo</h2>
+                <label for="manutencao_templo">Jovens que ajudaram:</label>
+                <input type="number" id="manutencao_templo" value="0" oninput="calculateDailyBase('manutencao_templo')" min="0">
+                <p>Pontos: 200 cada jovem</p>
+            </div>
+
+            <div class="mission">
+                <h2>Doação de Resma de Papel A4</h2>
+                <label for="resma_papel">Quantidade de resmas (se cumpriu, digite 1):</label>
+                <input type="number" id="resma_papel" value="0" oninput="calculateDailyBase('resma_papel')" min="0">
+                <p>Pontos: 700</p>
+            </div>
+
+            <div class="mission">
+                <h2>Montar Time de Futebol</h2>
+                <label for="time_futebol">Cumpriu o desafio? (digite 1):</label>
+                <input type="number" id="time_futebol" value="0" oninput="calculateDailyBase('time_futebol')" min="0">
+                <p>Pontos: 2.000</p>
+            </div>
+
+            <div class="mission">
+                <h2>Evangelização Criativa</h2>
+                <label for="evangelizacao_criativa">Cumpriu o desafio? (digite 1):</label>
+                <input type="number" id="evangelizacao_criativa" value="0" oninput="calculateDailyBase('evangelizacao_criativa')" min="0">
+                <p>Pontos: 1.000</p>
+            </div>
+
+            <div class="mission">
+                <h2>Ponto de Oração</h2>
+                <label for="ponto_oracao">Cumpriu o desafio? (digite 1):</label>
+                <input type="number" id="ponto_oracao" value="0" oninput="calculateDailyBase('ponto_oracao')" min="0">
+                <p>Pontos: 300</p>
+            </div>
+
+            <div class="total">
+                <h2>Pontuação Base Diária (para ser atribuída): <span id="dailyBaseDisplay">0</span></h2>
+            </div>
+
+            <div class="button-group">
+                <button class="primary-btn" onclick="showTribeSelection()">Atribuir Pontuação para Tribo</button>
+            </div>
+        </div>
+
+        <div id="tribe-scoring-section" class="tribe-scoring-section hidden">
+            <h2>Atribuir Pontuação à Tribo</h2>
+            <p>Pontuação Base Atual das Missões: <strong id="currentDailyBase">0</strong></p>
+
+            <label for="tribe-selector">Selecione a Tribo:</label>
+            <select id="tribe-selector" onchange="loadTribePoints()">
+                <option value="">-- Selecione --</option>
+            </select>
+
+            <div id="selected-tribe-inputs" class="hidden">
+                <h3><img id="selected-tribe-icon" class="tribe-icon" alt="Ícone da Tribo Selecionada"><span id="selected-tribe-name"></span></h3>
+                <label for="tribe_current_base">Pontos Base das Missões (preenchido automaticamente):</label>
+                <input type="number" id="tribe_current_base" value="0" disabled>
+
+                <label for="tribe_bonus">Bônus da Tribo (Missões Especiais):</label>
+                <input type="number" id="tribe_bonus" value="0" min="0">
+
+                <label for="tribe_total_manual">Total Manual (Opcional, para Missões Surpresa ou ajuste):</label>
+                <input type="number" id="tribe_total_manual" value="0" min="0">
+
+                <div class="button-group">
+                    <button class="primary-btn" onclick="saveTribePoints()">Salvar Pontuação da Tribo</button>
+                    <button class="danger-btn" onclick="clearSelectedTribeInputs()">Limpar Seleção</button>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="primary-btn" onclick="showDailyMissionsAdmin()">Voltar para Missões Diárias</button>
+            </div>
+        </div>
+
+        <div id="history-section" class="hidden container">
+            <h2>Histórico de Pontuação Semanal</h2>
+            <p>Acompanhe a evolução de cada tribo semana a semana. O campeão será a tribo com a maior pontuação acumulada!</p>
+            <table id="history-table">
+                <thead>
+                    <tr>
+                        <th>Tribo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                <tfoot>
+                    <tr class="history-total-row">
+                        <td>TOTAL GERAL</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="button-group">
+                <button class="primary-btn" onclick="showDailyMissionsAdmin()">Voltar ao Calculador</button>
+            </div>
+        </div>
+    </div> <div id="championAnimation">
+        <h2 id="championTitle">🏆 CAMPEÃO 🏆</h2>
+        <div id="championNameAnimated"></div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Rally "O Alvo" - Grupo Jovem.</p>
+    <button class="reset-btn-bottom-right hidden" id="admin-reset-button" onclick="confirmResetAllData()">Reiniciar Rally</button>
+</footer>
+
+<script>
+    // --- IMPORTANTE: SUBSTITUA ESTE LINK PELO SEU URL REAL DO GOOGLE APPS SCRIPT ---
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz4OX-o2PQJNS47HkwqtFgx3LXGApKXypL5g-AbkyxViiAgtdbxqZxE-vF9GR2BqWE/exec';
+    const TOTAL_WEEKS = 9; // Número total de semanas do Rally
+
+    let dailyBasePoints = 0;
+    let currentWeekNumber = 1;
+    let weekStatus = Array(TOTAL_WEEKS).fill(false); // Status de cada semana (finalizada/não finalizada)
+    let authenticatedUser = null; // Para armazenar o usuário logado
+
+    // Objeto para armazenar as pontuações e o histórico semanal
+    const tribes = {
+        levi: { weeklyScores: Array(TOTAL_WEEKS).fill(0), nameDisplay: "Tribo de Levi", logo: "Levi.png" },
+        juda: { weeklyScores: Array(TOTAL_WEEKS).fill(0), nameDisplay: "Tribo de Judá", logo: "Juda.png" },
+        naftali: { weeklyScores: Array(TOTAL_WEEKS).fill(0), nameDisplay: "Tribo de Naftali", logo: "Naftali.png" },
+        gade: { weeklyScores: Array(TOTAL_WEEKS).fill(0), nameDisplay: "Tribo de Gade", logo: "Gade.png" }
+    };
+
+    const dailyMissionInputValues = {
+        segunda: 0, terca: 0, quarta_outros: 0, quarta_principal: 0, quinta: 0,
+        sabado: 0, ej_novo: 0, ej_afastado: 0, domingo_150: 0, domingo_75: 0,
+        manutencao_templo: 0, resma_papel: 0, time_futebol: 0, evangelizacao_criativa: 0, ponto_oracao: 0
+    };
+
+    // Helper functions
+    const getInputValue = (id) => parseInt(document.getElementById(id).value) || 0;
+
+    // --- FUNÇÕES DE AUTENTICAÇÃO E CARREGAMENTO DE ESTADO ---
+    function openLoginModal() {
+        // Assegura que o modal esteja oculto antes de tentar exibir
+        const loginModal = document.getElementById('login-modal');
+        loginModal.classList.remove('hidden');
+        loginModal.style.display = 'flex'; // Exibe o modal
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-message').innerText = '';
+    }
+
+    function closeLoginModal() {
+        document.getElementById('login-modal').classList.add('hidden'); // Oculta o modal
+        document.getElementById('login-modal').style.display = 'none'; // Garante que não interfira no layout
+    }
+
+    async function performLogin() {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        const loginMessage = document.getElementById('login-message');
+
+        if (!username || !password) {
+            loginMessage.innerText = "Por favor, insira usuário e senha.";
+            return;
+        }
+
+        loginMessage.innerText = "Entrando...";
+        loginMessage.style.color = "blue";
+
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'login',
+                    username: username,
+                    password: password
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    authenticatedUser = { username: username, password: password };
+                    localStorage.setItem('rallyAuthenticatedUser', JSON.stringify(authenticatedUser));
+                    loginMessage.innerText = "Login bem-sucedido! Carregando dados...";
+                    loginMessage.style.color = "green";
+                    closeLoginModal(); // Fecha o modal
+                    await loadRallyStateFromSheet(); // Carrega o estado completo do rally da planilha
+                    document.getElementById('public-content').classList.add('hidden');
+                    document.getElementById('admin-content').classList.remove('hidden');
+                    document.getElementById('admin-reset-button').classList.remove('hidden'); // Mostra botão de reset
+                    showDailyMissionsAdmin(); // Vai para a tela de admin principal
+                } else {
+                    loginMessage.innerText = result.message || "Usuário ou senha inválidos.";
+                    loginMessage.style.color = "red";
+                }
+            } else {
+                loginMessage.innerText = "Erro no servidor de autenticação. Status: " + response.status;
+                loginMessage.style.color = "red";
+                console.error("Erro no Apps Script (HTTP Status):", response.status, response.statusText);
+            }
+
+        } catch (error) {
+            console.error('Erro ao tentar login (rede/JSON):', error);
+            loginMessage.innerText = "Erro ao conectar. Verifique sua conexão ou URL do Apps Script.";
+            loginMessage.style.color = "red";
+        }
+    }
+
+    async function loadRallyStateFromSheet() {
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'loadState',
+                    username: authenticatedUser ? authenticatedUser.username : "public", // Passa usuário se logado
+                    password: authenticatedUser ? authenticatedUser.password : "public" // Passa senha se logado
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.status === "success" && result.state) {
+                    currentWeekNumber = result.state.currentWeekNumber;
+                    
+                    weekStatus = result.state.weekStatus;
+                    while (weekStatus.length < TOTAL_WEEKS) {
+                        weekStatus.push(false);
+                    }
+                    
+                    for (const tribeId in tribes) {
+                        if (result.state.tribes[tribeId]) {
+                            while (result.state.tribes[tribeId].weeklyScores.length < TOTAL_WEEKS) {
+                                result.state.tribes[tribeId].weeklyScores.push(0);
+                            }
+                            // Garante que não exceda TOTAL_WEEKS
+                            tribes[tribeId].weeklyScores = result.state.tribes[tribeId].weeklyScores.slice(0, TOTAL_WEEKS);
+                        }
+                    }
+                    
+                    updateTribeDisplays(); // Atualiza os resultados públicos
+                    updateRanking(); // Atualiza o ranking público
+
+                    if (authenticatedUser) { // Se logado, atualiza também a interface de admin
+                        updateWeekSelector();
+                    }
+
+                } else {
+                    console.error("Erro ao carregar dados do rally (Apps Script): " + (result.message || "Resposta inválida."));
+                }
+            } else {
+                console.error("Erro ao conectar com o servidor para carregar dados. Status: " + response.status);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar estado do rally da planilha (rede/JSON):', error);
+        }
+    }
+
+    function performLogout() {
+        authenticatedUser = null;
+        localStorage.removeItem('rallyAuthenticatedUser');
+        alert("Você foi desconectado.");
+        document.getElementById('public-content').classList.remove('hidden'); // Volta para a tela pública
+        document.getElementById('admin-content').classList.add('hidden'); // Oculta o painel admin
+        document.getElementById('admin-reset-button').classList.add('hidden'); // Oculta botão de reset
+        // Reinicia inputs do login no modal, caso ele seja aberto novamente
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-message').innerText = '';
+        resetAllLocalData(); // Zera os dados locais para não vazar informações
+        loadRallyStateFromSheet(); // Recarrega os dados públicos (que estarão zerados após resetAllLocalData)
+    }
+
+    // --- Funções de Navegação para o ADMIN ---
+    function hideAllAdminSections() {
+        document.getElementById('daily-missions-section-admin').classList.add('hidden');
+        document.getElementById('tribe-scoring-section').classList.add('hidden');
+        document.getElementById('regulation-section').classList.add('hidden');
+        document.getElementById('history-section').classList.add('hidden');
+        document.getElementById('championAnimation').style.display = 'none';
+        // A líder display permanece visível no admin, mas a animação de campeão sobrepõe
+    }
+
+    function showDailyMissionsAdmin() {
+        hideAllAdminSections();
+        document.getElementById('daily-missions-section-admin').classList.remove('hidden');
+        resetDailyMissionInputs();
+        updateWeekSelector();
+        populateTribeSelector();
+    }
+
+    function toggleRegulation() {
+        const regulationSection = document.getElementById('regulation-section');
+        if (regulationSection.classList.contains('hidden')) {
+            hideAllAdminSections();
+            regulationSection.classList.remove('hidden');
+        } else {
+            showDailyMissionsAdmin();
+        }
+    }
+
+    function toggleHistory() {
+        const historySection = document.getElementById('history-section');
+        if (historySection.classList.contains('hidden')) {
+            hideAllAdminSections();
+            historySection.classList.remove('hidden');
+            updateHistoryDisplay();
+        } else {
+            showDailyMissionsAdmin();
+        }
+    }
+
+    function toggleChampionAnimation() {
+        const championAnimationDiv = document.getElementById('championAnimation');
+        
+        if (championAnimationDiv.style.display === 'flex') {
+            championAnimationDiv.style.display = 'none';
+            showDailyMissionsAdmin(); // Volta para a tela de missões
+        } else {
+            const sortedTribes = Object.keys(tribes)
+                .filter(key => Object.prototype.hasOwnProperty.call(tribes, key))
+                .map(key => ({
+                    name: tribes[key].nameDisplay,
+                    score: tribes[key].weeklyScores.reduce((sum, score) => sum + score, 0),
+                    id: key,
+                    logo: tribes[key].logo
+                }))
+                .sort((a, b) => b.score - a.score);
+
+            if (sortedTribes.length > 0 && sortedTribes[0].score > 0) {
+                const championTribeName = sortedTribes[0].name;
+                const championTribeLogo = sortedTribes[0].logo;
+
+                hideAllAdminSections(); // Esconde as seções do admin
+                championAnimationDiv.style.display = 'flex';
+
+                document.getElementById('championNameAnimated').innerHTML = `
+                    <img src="${championTribeLogo}" alt="Logo Campeão" class="tribe-icon">
+                    <span>${championTribeName}</span>
+                `;
+
+                // Remove confetes existentes para evitar acúmulo
+                const existingConfetti = championAnimationDiv.querySelectorAll('.confetti');
+                existingConfetti.forEach(confetti => confetti.remove());
+
+                // Adiciona novos confetes
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.backgroundColor = getRandomColor();
+                    confetti.style.setProperty('--random-x', `${Math.random() * 100}vw`);
+                    confetti.style.animationDelay = `${Math.random() * 2}s`;
+                    confetti.style.animationDuration = `${2 + Math.random() * 1}s`;
+                    championAnimationDiv.appendChild(confetti);
+                }
+            } else {
+                alert("Nenhuma tribo pontuada ainda para determinar um campeão! Lance os pontos das semanas para ver quem vence.");
+                showDailyMissionsAdmin();
+            }
+        }
+    }
+
+    function showTribeSelection() {
+        hideAllAdminSections();
+        document.getElementById('tribe-scoring-section').classList.remove('hidden');
+        document.getElementById('currentDailyBase').innerText = dailyBasePoints;
+        document.getElementById('selected-tribe-inputs').classList.add('hidden');
+        populateTribeSelector();
+    }
+
+    // --- Week Management (Adaptado para comunicação com Apps Script) ---
+    function updateWeekSelector() {
+        const weekSelector = document.getElementById('week-selector');
+        weekSelector.innerHTML = '';
+        for (let i = 1; i <= TOTAL_WEEKS; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.innerText = `Semana ${i}`;
+            if (weekStatus[i - 1]) {
+                option.innerText += ' (Finalizada)';
+            } else if (i < currentWeekNumber) {
+                   option.innerText += ' (Não Finalizada)';
+            }
+            if (i > currentWeekNumber) {
+                option.disabled = true;
+            }
+            weekSelector.appendChild(option);
+        }
+        weekSelector.value = currentWeekNumber;
+        document.getElementById('current-week-display').innerText = currentWeekNumber;
+    }
+
+    async function confirmChangeWeek() {
+        const weekSelector = document.getElementById('week-selector');
+        const newWeek = parseInt(weekSelector.value);
+        const oldWeek = currentWeekNumber;
+
+        if (newWeek === oldWeek) {
+            return;
+        }
+
+        if (newWeek < oldWeek && weekStatus[newWeek - 1]) {
+            const confirmReopen = confirm(`A Semana ${newWeek} foi marcada como FINALIZADA.\n\nTem certeza que deseja REABRIR esta semana para edição? Isso permitirá alterar as pontuações dela e atualizará a planilha.`);
+            if (!confirmReopen) {
+                weekSelector.value = oldWeek;
+                return;
+            }
+            const result = await sendToAppsScript('reopenWeek', { weekNumber: newWeek });
+            if (result.status === "success") {
+                weekStatus[newWeek - 1] = false;
+                currentWeekNumber = newWeek;
+                alert(`Semana ${newWeek} reaberta para edição e definida como semana atual.`);
+            } else {
+                alert("Erro ao reabrir semana na planilha: " + (result.message || "Erro desconhecido."));
+                weekSelector.value = oldWeek;
+                return;
+            }
+        } else if (newWeek > oldWeek) {
+            if (!weekStatus[oldWeek - 1]) {
+                    const confirmAdvance = confirm(`A Semana ${oldWeek} NÃO foi finalizada.\n\nAo avançar para a Semana ${newWeek} sem finalizar a Semana ${oldWeek}, você ainda poderá editar a Semana ${oldWeek} mais tarde.\n\nContinuar?`);
+                    if (!confirmAdvance) {
+                        weekSelector.value = oldWeek;
+                        return;
+                    }
+            }
+            const result = await sendToAppsScript('advanceWeek', { newWeekNumber: newWeek });
+            if (result.status === "success") {
+                currentWeekNumber = newWeek;
+                alert(`Avançado para a Semana ${newWeek}.`);
+            } else {
+                alert("Erro ao avançar semana na planilha: " + (result.message || "Erro desconhecido."));
+                weekSelector.value = oldWeek;
+                return;
+            }
+        }
+
+        currentWeekNumber = newWeek;
+        document.getElementById('current-week-display').innerText = currentWeekNumber;
+        resetDailyMissionInputs();
+        dailyBasePoints = 0;
+        document.getElementById('dailyBaseDisplay').innerText = 0;
+        updateTribeDisplays();
+        updateRanking();
+        updateWeekSelector();
+    }
+
+
+    // --- Calculate Daily Base Score ---
+    function calculateDailyBase(inputName) {
+        dailyMissionInputValues[inputName] = getInputValue(inputName);
+        let total = 0;
+        total += dailyMissionInputValues.segunda * 50;
+        total += dailyMissionInputValues.terca * 100;
+        total += dailyMissionInputValues.quarta_outros * 30;
+        total += dailyMissionInputValues.quarta_principal * 50;
+        total += dailyMissionInputValues.quinta * 50;
+        total += dailyMissionInputValues.sabado * 20;
+        total += dailyMissionInputValues.ej_novo * 100;
+        total += dailyMissionInputValues.ej_afastado * 60;
+        total += dailyMissionInputValues.domingo_150 * 150;
+        total += dailyMissionInputValues.domingo_75 * 75;
+        total += dailyMissionInputValues.manutencao_templo * 200;
+        total += dailyMissionInputValues.resma_papel * 700;
+        total += dailyMissionInputValues.time_futebol * 2000;
+        total += dailyMissionInputValues.evangelizacao_criativa * 1000;
+        total += dailyMissionInputValues.ponto_oracao * 300;
+        dailyBasePoints = total;
+        document.getElementById('dailyBaseDisplay').innerText = dailyBasePoints;
+    }
+
+    // --- Manage Individual Tribe Scoring ---
+    function populateTribeSelector() {
+        const tribeSelector = document.getElementById('tribe-selector');
+        tribeSelector.innerHTML = '<option value="">-- Selecione --</option>';
+        for (const tribeId in tribes) {
+            if (Object.prototype.hasOwnProperty.call(tribes, tribeId)) {
+                const option = document.createElement('option');
+                option.value = tribeId;
+                option.innerText = tribes[tribeId].nameDisplay;
+                tribeSelector.appendChild(option);
+            }
+        }
+        tribeSelector.value = "";
+        document.getElementById('selected-tribe-inputs').classList.add('hidden');
+    }
+
+    function loadTribePoints() {
+        const selectedTribeId = document.getElementById('tribe-selector').value;
+        const selectedTribeInputsDiv = document.getElementById('selected-tribe-inputs');
+        const selectedTribeIcon = document.getElementById('selected-tribe-icon');
+
+        if (selectedTribeId === "") {
+            selectedTribeInputsDiv.classList.add('hidden');
+            return;
+        }
+
+        selectedTribeInputsDiv.classList.remove('hidden');
+        document.getElementById('selected-tribe-name').innerText = tribes[selectedTribeId].nameDisplay;
+        selectedTribeIcon.src = tribes[selectedTribeId].logo;
+        selectedTribeIcon.alt = `Logo ${tribes[selectedTribeId].nameDisplay}`;
+
+        document.getElementById('tribe_current_base').value = dailyBasePoints;
+
+        const currentScoreForTribeInWeek = tribes[selectedTribeId].weeklyScores[currentWeekNumber - 1];
+        if (currentScoreForTribeInWeek > 0) {
+            document.getElementById('tribe_total_manual').value = currentScoreForTribeInWeek;
+            document.getElementById('tribe_bonus').value = 0;
+        } else {
+            document.getElementById('tribe_bonus').value = 0;
+            document.getElementById('tribe_total_manual').value = 0;
+        }
+    }
+
+    async function saveTribePoints() {
+        const selectedTribeId = document.getElementById('tribe-selector').value;
+        if (selectedTribeId === "") {
+            alert("Por favor, selecione uma tribo antes de salvar!");
+            return;
+        }
+
+        const currentBase = dailyBasePoints;
+        const bonus = getInputValue('tribe_bonus');
+        const manualTotal = getInputValue('tribe_total_manual');
+        let pointsToAdd = 0;
+        let isManualEntry = false;
+
+        if (manualTotal > 0) {
+            pointsToAdd = manualTotal;
+            isManualEntry = true;
+        } else {
+            pointsToAdd = currentBase + bonus;
+        }
+
+        const oldScoreForTribeInWeek = tribes[selectedTribeId].weeklyScores[currentWeekNumber - 1];
+        tribes[selectedTribeId].weeklyScores[currentWeekNumber - 1] = pointsToAdd;
+
+        const result = await sendToAppsScript('salvarDiario', {
+            tribe: tribes[selectedTribeId].nameDisplay,
+            score: pointsToAdd,
+            bonus: isManualEntry ? 0 : bonus,
+            manualTotal: isManualEntry ? manualTotal : 0,
+            week: `Semana ${currentWeekNumber}`,
+            date: new Date().toLocaleDateString('pt-BR'),
+            time: new Date().toLocaleTimeString('pt-BR'),
+            oldScore: oldScoreForTribeInWeek,
+            details: JSON.stringify(dailyMissionInputValues)
+        });
+
+        if (result.status === "success") {
+            alert(`Pontuação para ${tribes[selectedTribeId].nameDisplay} atualizada e enviada para a aba 'Lançamentos Diários'!`);
+            updateTribeDisplays();
+            updateRanking();
+            resetDailyMissionInputs();
+            populateTribeSelector();
+            showDailyMissionsAdmin(); // Volta para a tela de missões diárias
+        } else {
+            alert("Erro ao salvar pontuação da tribo: " + (result.message || "Erro desconhecido."));
+        }
+    }
+
+    function clearSelectedTribeInputs() {
+        document.getElementById('tribe-selector').value = "";
+        document.getElementById('selected-tribe-inputs').classList.add('hidden');
+        document.getElementById('tribe_bonus').value = 0;
+        document.getElementById('tribe_total_manual').value = 0;
+        populateTribeSelector();
+    }
+
+    function resetDailyMissionInputs() {
+        document.getElementById('segunda').value = 0;
+        document.getElementById('terca').value = 0;
+        document.getElementById('quarta_outros').value = 0;
+        document.getElementById('quarta_principal').value = 0;
+        document.getElementById('quinta').value = 0;
+        document.getElementById('sabado').value = 0;
+        document.getElementById('ej_novo').value = 0;
+        document.getElementById('ej_afastado').value = 0;
+        document.getElementById('domingo_150').value = 0;
+        document.getElementById('domingo_75').value = 0;
+        document.getElementById('manutencao_templo').value = 0;
+        document.getElementById('resma_papel').value = 0;
+        document.getElementById('time_futebol').value = 0;
+        document.getElementById('evangelizacao_criativa').value = 0;
+        document.getElementById('ponto_oracao').value = 0;
+
+        for (const key in dailyMissionInputValues) {
+            if (Object.prototype.hasOwnProperty.call(dailyMissionInputValues, key)) {
+                dailyMissionInputValues[key] = 0;
+            }
+        }
+        dailyBasePoints = 0;
+        document.getElementById('dailyBaseDisplay').innerText = 0;
+    }
+
+    // --- Reset All Data (comunicação com Apps Script) ---
+    async function confirmResetAllData() {
+        const confirmText = "Tem certeza que quer zerar TODOS os dados do Rally na PLANILHA GOOGLE E NO SITE? As pontuações semanais de TODAS as tribos e o histórico serão apagados! ESTA AÇÃO É IRREVERSÍVEL.";
+        const confirmReset = confirm(confirmText);
+
+        if (confirmReset) {
+            const result = await sendToAppsScript('resetAllData', {});
+            if (result.status === "success") {
+                resetAllLocalData();
+                alert("Rally Reiniciado! Todas as pontuações e semana resetadas.");
+                updateWeekSelector();
+                updateTribeDisplays();
+                updateRanking();
+                showDailyMissionsAdmin(); // Volta para o painel de admin
+            } else {
+                alert("Erro ao reiniciar o Rally na planilha: " + (result.message || "Erro desconhecido."));
+            }
+        } else {
+            alert("A operação de reinício foi cancelada.");
+        }
+    }
+
+    function resetAllLocalData() {
+        for (const tribeId in tribes) {
+            tribes[tribeId].weeklyScores = Array(TOTAL_WEEKS).fill(0);
+        }
+        weekStatus.fill(false);
+        currentWeekNumber = 1;
+        resetDailyMissionInputs();
+    }
+
+    // --- Functions for Display and Ranking Updates ---
+    function updateTribeDisplays() {
+        const totalScores = {};
+        for (const tribeId in tribes) {
+            totalScores[tribeId] = tribes[tribeId].weeklyScores.reduce((sum, score) => sum + score, 0);
+        }
+        document.getElementById('score_levi').innerText = totalScores.levi;
+        document.getElementById('score_juda').innerText = totalScores.juda;
+        document.getElementById('score_naftali').innerText = totalScores.naftali;
+        document.getElementById('score_gade').innerText = totalScores.gade;
+    }
+
+    function updateRanking() {
+        const sortedTribes = Object.keys(tribes)
+            .filter(key => Object.prototype.hasOwnProperty.call(tribes, key))
+            .map(key => ({
+                name: tribes[key].nameDisplay,
+                score: tribes[key].weeklyScores.reduce((sum, score) => sum + score, 0),
+                id: key,
+                logo: tribes[key].logo
+            }))
+            .sort((a, b) => b.score - a.score);
+
+        const rankingList = document.getElementById('tribes_ranking');
+        rankingList.innerHTML = '';
+
+        sortedTribes.forEach((tribe, index) => {
+            const listItem = document.createElement('li');
+            let trophy = '';
+            // Ajustando a atribuição de troféus para os 3 primeiros lugares
+            if (index === 0) {
+                trophy = '&#x1F3C6;'; // Troféu de Ouro
+            } else if (index === 1) {
+                trophy = '&#x1F948;'; // Medalha de Prata
+            } else if (index === 2) {
+                trophy = '&#x1F949;'; // Medalha de Bronze
+            } else {
+                trophy = '&#x1F3C5;'; // Troféu simples para os demais (opcional, pode ser vazio)
+            }
+            // Inclui o número do rank (1º, 2º, etc.) e o troféu
+            listItem.innerHTML = `
+                <span class="trophy">${trophy}</span>
+                <span class="tribe-rank-name-group">
+                    <img src="${tribe.logo}" alt="Logo ${tribe.name}" class="tribe-icon">
+                    <span class="tribe-name-text">${index + 1}º ${tribe.name}</span>
+                </span>
+                <span class="tribe-rank-score">${tribe.score}</span>
+            `;
+            rankingList.appendChild(listItem);
+        });
+
+        const leaderNameSpan = document.getElementById('leaderName');
+        if (sortedTribes.length > 0 && sortedTribes[0].score > 0) {
+            const leaderTribe = sortedTribes[0];
+            leaderNameSpan.innerHTML = `<img src="${leaderTribe.logo}" alt="Logo Líder" class="leader-icon"><span class="leader-text">${leaderTribe.name}</span>`;
+        } else {
+            leaderNameSpan.innerHTML = '<span class="leader-text">Nenhuma tribo pontuada</span>';
+        }
+    }
+
+    function getRandomColor() {
+        const colors = [
+            '#FFC107', /* Amarelo Destaque */
+            '#28A745', /* Verde Destaque */
+            '#007BFF', /* Azul Claro */
+            '#FFFFFF', /* Branco */
+            '#FF4500', /* Vermelho-Alaranjado para pop */
+            '#9932CC'  /* Roxo Médio para variedade */
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    // --- Core Logic for Ending Week ---
+    async function confirmEndWeek() {
+        const confirmText = `Você tem certeza que deseja FINALIZAR a Semana ${currentWeekNumber}?\n\nIsso salvará a pontuação TOTAL de todas as tribos para esta semana na planilha e avançará para a próxima semana.\n\nESTA AÇÃO NÃO PODE SER DESFEITA FACILMENTE NA PLANILHA.`;
+        const confirmEnd = confirm(confirmText);
+
+        if (confirmEnd) {
+            const dadosSemanaisParaEnvio = Object.keys(tribes).map(tribeId => {
+                return {
+                    semana: `Semana ${currentWeekNumber}`,
+                    nome: tribes[tribeId].nameDisplay,
+                    pontuacaoTotalSemana: tribes[tribeId].weeklyScores[currentWeekNumber - 1]
+                };
+            });
+
+            const result = await sendToAppsScript('salvarSemanal', {
+                dadosSemanais: dadosSemanaisParaEnvio,
+                currentWeekNumber: currentWeekNumber
+            });
+
+            if (result.status === "success") {
+                alert(`Pontuação da Semana ${currentWeekNumber} salva com sucesso na aba 'Pontuação Semanal' na sua planilha!`);
+                weekStatus[currentWeekNumber - 1] = true;
+                
+                if (currentWeekNumber < TOTAL_WEEKS) {
+                    currentWeekNumber++;
+                    alert(`Avançado para a Semana ${currentWeekNumber}.`);
+                } else {
+                    alert("Todas as semanas foram concluídas! O Rally terminou. Verifique o Campeão Final!");
+                }
+                resetDailyMissionInputs();
+                updateWeekSelector();
+                updateTribeDisplays();
+                updateRanking();
+                showDailyMissionsAdmin();
+            } else {
+                alert("Erro ao salvar a pontuação semanal: " + (result.message || "Erro desconhecido."));
+                console.error('Erro ao salvar semanal:', result);
+            }
+        } else {
+            alert("A finalização da semana foi cancelada.");
+        }
+    }
+
+    // --- Nova Função para Comunicação com Apps Script ---
+    async function sendToAppsScript(action, payload) {
+        if (!authenticatedUser) {
+            alert("Você não está logado. Por favor, faça login para realizar esta ação.");
+            return { status: "error", message: "Não logado." };
+        }
+
+        const dataToSend = {
+            action: action,
+            username: authenticatedUser.username,
+            password: authenticatedUser.password,
+            ...payload
+        };
+
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToSend),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Erro na resposta do servidor para a ação '${action}': Status ${response.status}, Resposta: ${errorText}`);
+                throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error(`Erro ao enviar ação '${action}' para Apps Script:`, error);
+            return { status: "error", message: `Falha na conexão ou erro de rede para ${action}.` };
+        }
+    }
+
+    // --- Histórico de Pontuação Semanal ---
+    async function updateHistoryDisplay() {
+        const historyTableBody = document.querySelector('#history-table tbody');
+        const historyTableHead = document.querySelector('#history-table thead tr');
+        const historyTableFoot = document.querySelector('#history-table tfoot tr');
+
+        // Limpa o cabeçalho existente (exceto a primeira coluna 'Tribo')
+        while (historyTableHead.children.length > 1) {
+            historyTableHead.removeChild(historyTableHead.lastChild);
+        }
+        // Limpa o rodapé existente (exceto a primeira coluna 'TOTAL GERAL')
+        while (historyTableFoot.children.length > 1) {
+            historyTableFoot.removeChild(historyTableFoot.lastChild);
+        }
+        historyTableBody.innerHTML = ''; // Limpa o corpo da tabela
+
+        // Adiciona as colunas de semanas ao cabeçalho e ao rodapé
+        for (let i = 1; i <= TOTAL_WEEKS; i++) {
+            const th = document.createElement('th');
+            th.innerText = `Semana ${i}`;
+            historyTableHead.appendChild(th);
+
+            const td = document.createElement('td');
+            td.id = `total_semana_${i}`; // ID para atualizar o total de cada semana
+            td.innerText = '0'; // Valor inicial
+            historyTableFoot.appendChild(td);
+        }
+
+        // Adiciona o cabeçalho 'Total Acumulado' para o rodapé e o cabeçalho
+        const thTotalAcumulado = document.createElement('th');
+        thTotalAcumulado.innerText = 'Total Acumulado';
+        historyTableHead.appendChild(thTotalAcumulado);
+
+
+        // Preenche o corpo da tabela com as pontuações das tribos
+        for (const tribeId in tribes) {
+            if (Object.prototype.hasOwnProperty.call(tribes, tribeId)) {
+                const tribe = tribes[tribeId];
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                nameCell.innerHTML = `<div style="display:flex; align-items:center; gap: 8px;"><img src="${tribe.logo}" alt="Logo ${tribe.nameDisplay}" class="tribe-icon" style="width:25px; height:25px;"> ${tribe.nameDisplay}</div>`;
+                row.appendChild(nameCell);
+
+                let totalTribeScore = 0;
+                for (let i = 0; i < TOTAL_WEEKS; i++) {
+                    const score = tribe.weeklyScores[i] || 0;
+                    const scoreCell = document.createElement('td');
+                    scoreCell.innerText = score;
+                    row.appendChild(scoreCell);
+                    totalTribeScore += score;
+                }
+                const totalCell = document.createElement('td'); // Célula para o total acumulado da tribo
+                totalCell.innerText = totalTribeScore;
+                row.appendChild(totalCell);
+                historyTableBody.appendChild(row);
+            }
+        }
+        
+        // Recalcula e atualiza o "TOTAL GERAL" no rodapé
+        const tdTotalGeral = document.createElement('td');
+        tdTotalGeral.innerText = Object.values(tribes).reduce((sumTotal, tribe) => {
+            return sumTotal + tribe.weeklyScores.reduce((sum, score) => sum + score, 0);
+        }, 0);
+        historyTableFoot.appendChild(tdTotalGeral);
+
+
+        // Recalcula e atualiza os totais por semana no rodapé
+        for (let i = 0; i < TOTAL_WEEKS; i++) {
+            let weekTotal = 0;
+            for (const tribeId in tribes) {
+                if (Object.prototype.hasOwnProperty.call(tribes, tribeId)) {
+                    weekTotal += tribes[tribeId].weeklyScores[i] || 0;
+                }
+            }
+            // Garante que o elemento td existe antes de tentar acessá-lo
+            const totalCellElement = document.getElementById(`total_semana_${i + 1}`);
+            if(totalCellElement) {
+                totalCellElement.innerText = weekTotal;
+            }
+        }
+    }
+
+
+    // --- Inicialização ---
+    function initialize() {
+        // Assegura que a tela de login esteja oculta ao carregar
+        document.getElementById('login-modal').classList.add('hidden');
+
+        // Carrega o estado inicial das pontuações para a tela pública
+        loadRallyStateFromSheet();
+
+        // Verifica se há usuário autenticado no localStorage
+        if (localStorage.getItem('rallyAuthenticatedUser')) {
+            authenticatedUser = JSON.parse(localStorage.getItem('rallyAuthenticatedUser'));
+            // Tenta recarregar o estado completo e ir para a tela de admin
+            performLoginFromLocalStorage();
+        } else {
+            // Mostra apenas o conteúdo público
+            document.getElementById('public-content').classList.remove('hidden');
+            document.getElementById('admin-content').classList.add('hidden');
+            document.getElementById('admin-reset-button').classList.add('hidden'); // Oculta botão de reset na tela pública
+        }
+    }
+
+    // Função para tentar login automático se houver credenciais no localStorage
+    async function performLoginFromLocalStorage() {
+        if (!authenticatedUser) return; // Não há usuário salvo
+
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'login',
+                    username: authenticatedUser.username,
+                    password: authenticatedUser.password
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    // Se o login automático for bem-sucedido
+                    document.getElementById('public-content').classList.add('hidden');
+                    document.getElementById('admin-content').classList.remove('hidden');
+                    document.getElementById('admin-reset-button').classList.remove('hidden'); // Mostra botão de reset
+                    showDailyMissionsAdmin(); // Vai para a tela de admin principal
+                    // Removendo o alert para login automático para ser mais suave
+                    // alert("Bem-vindo(a) de volta, secretaria!");
+                } else {
+                    // Se o login automático falhar (credenciais inválidas ou Apps Script não autorizou)
+                    console.warn("Login automático falhou, credenciais salvas inválidas ou Apps Script negou. Limpando localStorage.");
+                    localStorage.removeItem('rallyAuthenticatedUser');
+                    authenticatedUser = null;
+                    document.getElementById('public-content').classList.remove('hidden');
+                    document.getElementById('admin-content').classList.add('hidden');
+                    document.getElementById('admin-reset-button').classList.add('hidden');
+                    loadRallyStateFromSheet(); // Recarrega para a tela pública limpa
+                }
+            } else {
+                console.error("Erro no servidor ao tentar login automático. Status: " + response.status);
+                // Em caso de erro de rede ou servidor no login automático, limpa as credenciais
+                localStorage.removeItem('rallyAuthenticatedUser');
+                authenticatedUser = null;
+                document.getElementById('public-content').classList.remove('hidden');
+                document.getElementById('admin-content').classList.add('hidden');
+                document.getElementById('admin-reset-button').classList.add('hidden');
+                loadRallyStateFromSheet(); // Recarrega para a tela pública limpa
+            }
+        } catch (error) {
+            console.error('Erro ao tentar login automático (rede/JSON):', error);
+            // Em caso de erro de JS/rede, limpa as credenciais
+            localStorage.removeItem('rallyAuthenticatedUser');
+            authenticatedUser = null;
+            document.getElementById('public-content').classList.remove('hidden');
+            document.getElementById('admin-content').classList.add('hidden');
+            document.getElementById('admin-reset-button').classList.add('hidden');
+            loadRallyStateFromSheet(); // Recarrega para a tela pública limpa
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initialize);
+</script>
+
+</body>
+</html>
